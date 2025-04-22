@@ -105,7 +105,7 @@
 
     <!-- Container: Monitoring & Logging -->
     <rect class="container" x="550" y="370" width="400" height="230" />
-    <text class="container-label" x="575" y="395">Monitoring & Logging</text>
+    <text class="container-label" x="575" y="395">Monitoring &amp; Logging</text>
     
     <rect class="box" x="570" y="410" width="120" height="60" />
     <text class="label" x="590" y="445">Prometheus</text>
