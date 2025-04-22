@@ -6,7 +6,7 @@ resource "aws_iam_role" "eks_oidc" {
 }
 
 resource "aws_iam_policy" "eks-oidc-policy" {
-  name = "test-policy"
+  name = "test-policy-${random_integer.random_suffix.result}"
 
   policy = jsonencode({
     Statement = [{

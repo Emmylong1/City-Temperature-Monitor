@@ -174,7 +174,7 @@ resource "aws_security_group" "eks-cluster-sg" {
 resource "aws_security_group" "rds" {
   name        = "${var.db_name}-sg"
   description = "Allow PostgreSQL traffic"
-  vpc_id      = data.aws_vpc.vpc.ids
+  vpc_id = aws_vpc.vpc.id
 
   ingress {
     from_port   = 5432

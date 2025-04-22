@@ -64,4 +64,8 @@ variable "allocated_storage" {}
 
 variable "allowed_cidrs" {}
 
+variable "username" {}
+
+variable "password" {}
+
 variable "environment" {}
