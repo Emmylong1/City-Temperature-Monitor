@@ -1,5 +1,5 @@
 module "eks" {
-source                = "../../../modules/eks"
+source                = "../../../modules/infra"
 env                   = "production"
 is_eks_role_enabled             = true
 is_eks_nodegroup_role_enabled   = true
@@ -20,6 +20,13 @@ eip-name              = "elasticip-ngw"
 ngw-name              = "ngw"
 eks-sg                = "eks-sg"
 
+# RDS DB Configuration
+db_name               = "mydb"
+engine_version        = "16.3"
+instance_class        = "db.t3.micro"
+allocated_storage     = 20           
+allowed_cidrs         = ["10.0.0.0/16"]  
+environment           = "production"
 # EKS
 is-eks-cluster-enabled     = true
 cluster-version            = "1.29"
