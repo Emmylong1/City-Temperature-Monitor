@@ -3,8 +3,10 @@
 ## Overview
 This project designs, implements, and maintains a robust, scalable, and containerized infrastructure for collecting and storing temperature data from multiple cities. It ensures high availability, reliability, and efficient data management.
 
-## Architecture Diagram
-![image alt](https://github.com/Emmylong1/Drone-Data/blob/29b7ead546a629ad45b4830091956baeaf86db67/image.png)
+### System Architecture
+
+![Temperature Data Collection System Architecture](https://raw.githubusercontent.com/Emmylong1/City-Temperature-Monitor/maintemperature-architecture.svg)
+
 
 ## Setup Instructions
 1. [Clone the repository](https://github.com/Emmylong1/Drone-Data/tree/emmydev).

@@ -1,0 +1,140 @@
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+    <!-- Styles -->
+    <defs>
+        <style>
+            .container { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+            .box { fill: white; stroke: #333; stroke-width: 2; rx: 5; ry: 5; }
+            .db { fill: white; stroke: #333; stroke-width: 2; rx: 20; ry: 20; }
+            .arrow { stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+            .dashed { stroke-dasharray: 5,5; }
+            .container-label { font-family: Arial; font-size: 18px; font-weight: bold; }
+            .label { font-family: Arial; font-size: 14px; }
+            .small-label { font-family: Arial; font-size: 12px; }
+        </style>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+        </marker>
+    </defs>
+
+    <!-- Container: Data Collection -->
+    <rect class="container" x="50" y="50" width="300" height="150" />
+    <text class="container-label" x="75" y="75">Data Collection</text>
+    
+    <rect class="box" x="70" y="90" width="120" height="60" />
+    <text class="label" x="80" y="125">Temperature Scraper</text>
+    
+    <rect class="box" x="220" y="90" width="100" height="60" />
+    <text class="label" x="235" y="125">wttr.in API</text>
+    
+    <rect class="box" x="145" y="170" width="120" height="60" />
+    <text class="label" x="165" y="205">Data Processor</text>
+    
+    <line class="arrow" x1="190" y1="120" x2="220" y2="120" />
+    <text class="small-label" x="175" y="110">Scheduled Hourly</text>
+    <line class="arrow" x1="270" y1="150" x2="220" y2="170" />
+
+    <!-- Container: Message Broker -->
+    <rect class="container" x="50" y="250" width="300" height="150" />
+    <text class="container-label" x="75" y="275">Message Broker</text>
+    
+    <rect class="box" x="70" y="290" width="120" height="60" />
+    <text class="label" x="80" y="325">Kafka Producer</text>
+    
+    <rect class="box" x="220" y="290" width="100" height="60" />
+    <text class="label" x="225" y="325">Kafka Cluster</text>
+    
+    <rect class="box" x="145" y="370" width="120" height="60" />
+    <text class="label" x="165" y="405">Kafka Consumer</text>
+    
+    <line class="arrow" x1="205" y1="230" x2="160" y2="290" />
+    <line class="arrow" x1="190" y1="320" x2="220" y2="320" />
+    <line class="arrow" x1="270" y1="350" x2="220" y2="370" />
+
+    <!-- Container: Storage -->
+    <rect class="container" x="50" y="450" width="450" height="150" />
+    <text class="container-label" x="75" y="475">Storage</text>
+    
+    <rect class="box" x="70" y="490" width="120" height="60" />
+    <text class="label" x="80" y="525">Database Writer</text>
+    
+    <ellipse class="db" cx="300" cy="520" rx="80" ry="40" />
+    <text class="label" x="260" y="525">Relational DB</text>
+    
+    <rect class="box" x="70" y="570" width="120" height="60" />
+    <text class="label" x="75" y="605">IPFS Storage Service</text>
+    
+    <rect class="box" x="300" y="570" width="120" height="60" />
+    <text class="label" x="315" y="605">IPFS Network</text>
+    
+    <line class="arrow" x1="205" y1="430" x2="160" y2="490" />
+    <line class="arrow" x1="190" y1="520" x2="220" y2="520" />
+    <line class="arrow dashed" x1="130" y1="550" x2="130" y2="570" />
+    <line class="arrow" x1="190" y1="600" x2="300" y2="600" />
+
+    <!-- Container: Cloud Infrastructure -->
+    <rect class="container" x="550" y="50" width="400" height="300" />
+    <text class="container-label" x="575" y="75">Cloud Infrastructure</text>
+    
+    <rect class="box" x="570" y="90" width="120" height="60" />
+    <text class="label" x="580" y="125">Kubernetes Cluster</text>
+    
+    <rect class="box" x="700" y="90" width="120" height="60" />
+    <text class="label" x="715" y="125">Load Balancer</text>
+    
+    <rect class="box" x="635" y="170" width="120" height="60" />
+    <text class="label" x="645" y="205">Auto-scaling Group</text>
+    
+    <rect class="box" x="770" y="170" width="120" height="60" />
+    <text class="label" x="805" y="205">ArgoCD</text>
+    
+    <!-- Container links to services -->
+    <line class="arrow" x1="630" y1="150" x2="650" y2="170" />
+    <line class="arrow" x1="760" y1="150" x2="800" y2="170" />
+    <line class="arrow" x1="635" y1="180" x2="200" y2="120" stroke="#777" />
+    <text class="small-label" x="500" y="130">Manages</text>
+    <line class="arrow" x1="635" y1="185" x2="205" y2="200" stroke="#777" />
+    <text class="small-label" x="500" y="180">Manages</text>
+    <line class="arrow" x1="635" y1="190" x2="130" y2="290" stroke="#777" />
+    <text class="small-label" x="450" y="250">Manages</text>
+    <line class="arrow" x1="635" y1="195" x2="205" y2="370" stroke="#777" />
+    <text class="small-label" x="450" y="300">Manages</text>
+    <line class="arrow" x1="635" y1="200" x2="130" y2="490" stroke="#777" />
+    <text class="small-label" x="400" y="350">Manages</text>
+    <line class="arrow" x1="635" y1="205" x2="130" y2="570" stroke="#777" />
+    <text class="small-label" x="400" y="400">Manages</text>
+
+    <!-- Container: Monitoring & Logging -->
+    <rect class="container" x="550" y="370" width="400" height="230" />
+    <text class="container-label" x="575" y="395">Monitoring & Logging</text>
+    
+    <rect class="box" x="570" y="410" width="120" height="60" />
+    <text class="label" x="590" y="445">Prometheus</text>
+    
+    <rect class="box" x="800" y="410" width="120" height="60" />
+    <text class="label" x="830" y="445">Grafana</text>
+    
+    <rect class="box" x="680" y="500" width="120" height="60" />
+    <text class="label" x="695" y="535">Log Aggregator</text>
+    
+    <!-- Services to monitoring -->
+    <line class="arrow" x1="300" y1="440" x2="570" y2="440" stroke="#777" />
+    <line class="arrow" x1="690" y1="440" x2="800" y2="440" />
+    <line class="arrow" x1="300" y1="500" x2="680" y2="530" stroke="#777" />
+
+    <!-- Container: CI/CD Pipeline -->
+    <rect class="container" x="550" y="620" width="400" height="150" />
+    <text class="container-label" x="575" y="645">CI/CD Pipeline</text>
+    
+    <rect class="box" x="570" y="660" width="120" height="60" />
+    <text class="label" x="580" y="695">GitHub Repository</text>
+    
+    <rect class="box" x="700" y="660" width="120" height="60" />
+    <text class="label" x="730" y="695">CI/CD Tool</text>
+    
+    <rect class="box" x="830" y="660" width="100" height="60" />
+    <text class="label" x="845" y="695">DockerHub</text>
+    
+    <line class="arrow" x1="690" y1="690" x2="700" y2="690" />
+    <line class="arrow" x1="820" y1="690" x2="830" y2="690" />
+    <line class="arrow" x1="880" y1="660" x2="830" y2="230" />
+</svg>
