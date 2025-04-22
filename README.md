@@ -5,7 +5,7 @@ This project designs, implements, and maintains a robust, scalable, and containe
 
 ### System Architecture
 
-<img src="./temperature-architecture.svg" alt="Temperature Data Collection System Architecture">)
+![Temperature Data Collection System Architecture](https://raw.githubusercontent.com/Emmylong1/City-Temperature-Monitor/maintemperature-architecture.svg)
 
 
 ## Setup Instructions
