@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Temperature Dashboard</h1>
+                <div>
+                    <a href="/" class="btn btn-outline-secondary me-2">Home</a>
+                    <button id="refreshBtn" class="btn btn-primary">Refresh Data</button>
+                </div>
+            </div>
+        </header>
+
+        <div id="loadingIndicator" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading temperature data...</p>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger d-none"></div>
+
+        <div id="noDataMessage" class="alert alert-warning d-none">
+            <p>No temperature data available.</p>
+            <button id="triggerScrapeBtn" class="btn btn-success">Trigger Data Collection</button>
+        </div>
+
+        <div id="dashboardContent" class="d-none">
+            <div id="cityCards" class="row mb-4">
+                <!-- City cards will be inserted here -->
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">Temperature History</h2>
+                    <div class="mb-3">
+                        <label for="citySelect" class="form-label">Select City:</label>
+                        <select id="citySelect" class="form-select" style="max-width: 200px;">
+                            <!-- City options will be inserted here -->
+                        </select>
+                    </div>
+                    <div style="height: 400px;">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">Recent Temperature Data</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>City</th>
+                                    <th>Temperature (°C)</th>
+                                    <th>Timestamp</th>
+                                    <th>IPFS Hash</th>
+                                </tr>
+                            </thead>
+                            <tbody id="temperatureTable">
+                                <!-- Temperature data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart instance
+        let temperatureChart = null;
+
+        // Fetch temperature data
+        async function fetchTemperatures() {
+            try {
+                const response = await fetch('/api/temperatures');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch temperature data: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching temperature data:', error);
+                throw error;
+            }
+        }
+
+        // Update the UI with temperature data
+        async function updateUI() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const noDataMessage = document.getElementById('noDataMessage');
+            const dashboardContent = document.getElementById('dashboardContent');
+            
+            loadingIndicator.classList.remove('d-none');
+            errorMessage.classList.add('d-none');
+            noDataMessage.classList.add('d-none');
+            dashboardContent.classList.add('d-none');
+            
+            try {
+                const data = await fetchTemperatures();
+                
+                if (data.length === 0) {
+                    loadingIndicator.classList.add('d-none');
+                    noDataMessage.classList.remove('d-none');
+                    return;
+                }
+
+                // Get unique cities
+                const cities = [...new Set(data.map(item => item.city))];
+
+                // Update city cards
+                const cityCardsContainer = document.getElementById('cityCards');
+                cityCardsContainer.innerHTML = '';
+
+                cities.forEach(city => {
+                    const cityData = data
+                        .filter(item => item.city === city)
+                        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+
+                    const card = document.createElement('div');
+                    card.className = 'col-md-4 col-lg-4 mb-3';
+                    card.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">${city}</h3>
+                                <div class="display-4 mb-2">${cityData.temperature}°C</div>
+                                <div class="text-muted small">
+                                    Last updated: ${new Date(cityData.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    cityCardsContainer.appendChild(card);
+                });
+
+                // Update city select options
+                const citySelect = document.getElementById('citySelect');
+                citySelect.innerHTML = '';
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+
+                // Update temperature table
+                const temperatureTable = document.getElementById('temperatureTable');
+                temperatureTable.innerHTML = '';
+                data
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .slice(0, 100) // Show only the latest 100 records
+                    .forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.city}</td>
+                            <td>${item.temperature}°C</td>
+                            <td>${new Date(item.timestamp).toLocaleString()}</td>
+                            <td>
+                                <span class="text-truncate d-inline-block" style="max-width: 150px;" title="${item.ipfs_hash}">
+                                    ${item.ipfs_hash || 'N/A'}
+                                </span>
+                            </td>
+                        `;
+                        temperatureTable.appendChild(row);
+                    });
+
+                // Update chart for the selected city
+                updateChart(citySelect.value, data);
+                
+                // Show dashboard content
+                loadingIndicator.classList.add('d-none');
+                dashboardContent.classList.remove('d-none');
+            } catch (error) {
+                console.error('Error updating UI:', error);
+                loadingIndicator.classList.add('d-none');
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('d-none');
+            }
+        }
+
+        // Update the temperature chart for a specific city
+        function updateChart(city, data) {
+            const cityData = data
+                .filter(item => item.city === city)
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                .slice(-24); // Last 24 data points
+
+            const labels = cityData.map(item => {
+                const date = new Date(item.timestamp);
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            });
+            const temperatures = cityData.map(item => item.temperature);
+
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            
+            if (temperatureChart) {
+                temperatureChart.destroy();
+            }
+
+            temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${city} Temperature (°C)`,
+                        data: temperatures,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Trigger manual scrape
+        async function triggerScrape() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            loadingIndicator.classList.remove('d-none');
+            errorMessage.classList.add('d-none');
+            
+            try {
+                const response = await fetch('/api/manual-scrape');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update UI with new data
+                    await updateUI();
+                } else {
+                    throw new Error(data.error || 'Failed to trigger scrape');
+                }
+            } catch (error) {
+                console.error('Error triggering scrape:', error);
+                loadingIndicator.classList.add('d-none');
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('d-none');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial UI update
+            updateUI();
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', updateUI);
+            
+            // Trigger scrape button
+            document.getElementById('triggerScrapeBtn').addEventListener('click', triggerScrape);
+            
+            // City select change
+            document.getElementById('citySelect').addEventListener('change', async (e) => {
+                try {
+                    const data = await fetchTemperatures();
+                    updateChart(e.target.value, data);
+                } catch (error) {
+                    console.error('Error updating chart:', error);
+                }
+            });
+            
+            // Auto-refresh every minute
+            setInterval(updateUI, 60000);
+        });
+    </script>
+</body>
+</html>
